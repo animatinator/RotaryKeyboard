@@ -14,6 +14,7 @@ import com.animatinator.rotarykeyboard.util.CoordinateUtils;
 import com.animatinator.rotarykeyboard.util.Coordinates;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class RotaryKeyboardView extends View implements View.OnTouchListener {
@@ -40,7 +41,7 @@ public class RotaryKeyboardView extends View implements View.OnTouchListener {
     private boolean isDragging = false;
     private Coordinates rootPos = new Coordinates(0, 0);
     private Coordinates currentPos = new Coordinates(0, 0);
-    private ArrayList<Integer> selectedLetters = new ArrayList<>();
+    private List<Integer> selectedLetters = new ArrayList<>();
 
     public RotaryKeyboardView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -59,15 +60,13 @@ public class RotaryKeyboardView extends View implements View.OnTouchListener {
         circlePaint.setAlpha(200);
 
         linePaint = new Paint();
-        linePaint.setColor(Color.BLUE);
-        linePaint.setAlpha(150);
+        linePaint.setARGB(255, 0, 0, 150);
         linePaint.setStyle(Paint.Style.STROKE);
         linePaint.setStrokeWidth(50.0f);
         linePaint.setStrokeCap(Paint.Cap.ROUND);
 
         letterHighlightPaint = new Paint();
-        letterHighlightPaint.setColor(Color.BLUE);
-        letterHighlightPaint.setAlpha(150);
+        letterHighlightPaint.setARGB(255, 0, 0, 150);
         letterHighlightPaint.setStyle(Paint.Style.FILL);
 
         textPaint = new Paint();
@@ -214,9 +213,9 @@ public class RotaryKeyboardView extends View implements View.OnTouchListener {
         int action = event.getAction();
 
         if (action == MotionEvent.ACTION_UP) {
+            wordEntryCallback.onWordEntered(getEnteredWord());
             isDragging = false;
             selectedLetters = new ArrayList<>();
-            wordEntryCallback.onWordEntered("Test text");
             invalidate();
 
         } else if (action == MotionEvent.ACTION_DOWN) {
@@ -233,8 +232,11 @@ public class RotaryKeyboardView extends View implements View.OnTouchListener {
         } else if (action == MotionEvent.ACTION_MOVE) {
             Optional<Integer> selectedLetter = getAdjacentLetter(position);
             if (selectedLetter.isPresent()) {
-                // TODO handle case where already selected.
-                selectedLetters.add(selectedLetter.get());
+                if (selectedLetters.contains(selectedLetter.get())) {
+                    stripSelectedLettersBackToLetter(selectedLetter.get());
+                } else {
+                    selectedLetters.add(selectedLetter.get());
+                }
             }
             currentPos = position;
             invalidate();
@@ -245,6 +247,19 @@ public class RotaryKeyboardView extends View implements View.OnTouchListener {
         if (handled) invalidate();
 
         return handled;
+    }
+
+    private String getEnteredWord() {
+        StringBuilder builder = new StringBuilder();
+        for (Integer id : selectedLetters) {
+            builder.append(letters[id]);
+        }
+        return builder.toString();
+    }
+
+    private void stripSelectedLettersBackToLetter(Integer selectedLetter) {
+        int index = selectedLetters.indexOf(selectedLetter);
+        selectedLetters = selectedLetters.subList(0, index + 1);
     }
 
     public interface WordEntryCallback {
