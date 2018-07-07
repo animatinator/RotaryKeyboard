@@ -27,6 +27,7 @@ public class RotaryKeyboard {
     private Paint letterHighlightPaint;
     private Paint circlePaint;
     private Paint textPaint;
+    private Paint highlightedTextPaint;
 
     private Coordinates bottomRight = null;
 
@@ -65,6 +66,11 @@ public class RotaryKeyboard {
         textPaint.setColor(Color.BLACK);
         textPaint.setTextAlign(Paint.Align.CENTER);
         textPaint.setTextSize(200.0f);
+
+        highlightedTextPaint = new Paint();
+        highlightedTextPaint.setColor(Color.WHITE);
+        highlightedTextPaint.setTextAlign(Paint.Align.CENTER);
+        highlightedTextPaint.setTextSize(200.0f);
     }
 
     public void updateSize(Coordinates bottomRight) {
@@ -179,7 +185,18 @@ public class RotaryKeyboard {
             Coordinates position = letterPositions[i];
             // Centre vertically.
             float yPos = position.y() - ((textPaint.ascent() + textPaint.descent()) / 2.0f);
-            canvas.drawText(letter, position.x(), yPos, textPaint);
+
+            // Choose whether to use the highlighted text or normal text paint based on whether the
+            // current letter is in the list of selected letters.
+            Paint paintToUse;
+
+            if (selectedLetters.contains(i)) {
+                paintToUse = highlightedTextPaint;
+            } else {
+                paintToUse = textPaint;
+            }
+
+            canvas.drawText(letter, position.x(), yPos, paintToUse);
         }
     }
 
