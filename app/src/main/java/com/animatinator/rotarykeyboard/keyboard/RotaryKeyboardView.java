@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -167,12 +166,10 @@ public class RotaryKeyboardView extends View implements View.OnTouchListener {
             int numLetters = letters.length;
 
             letterPositions = new Coordinates[numLetters];
-            Log.e("test", "Got this many letters: "+numLetters);
 
             float letterDistanceFromCentre = circleRadius * LETTER_RADIUS_RATIO;
 
             for (int i = 0; i < numLetters; i++) {
-                Log.e("test", "Letter: '"+letters[i]+"'.");
                 double angle = (Math.PI * 2 * i) / numLetters;
 
                 float xFact = (float) Math.sin(angle);
@@ -237,6 +234,7 @@ public class RotaryKeyboardView extends View implements View.OnTouchListener {
                 } else {
                     selectedLetters.add(selectedLetter.get());
                 }
+                wordEntryCallback.onPartialWord(getEnteredWord());
             }
             currentPos = position;
             invalidate();
@@ -264,5 +262,6 @@ public class RotaryKeyboardView extends View implements View.OnTouchListener {
 
     public interface WordEntryCallback {
         void onWordEntered(String word);
+        void onPartialWord(String partialWord);
     }
 }

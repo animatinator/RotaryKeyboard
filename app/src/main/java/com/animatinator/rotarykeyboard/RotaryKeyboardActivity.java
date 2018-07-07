@@ -1,5 +1,6 @@
 package com.animatinator.rotarykeyboard;
 
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +20,14 @@ public class RotaryKeyboardActivity extends AppCompatActivity {
         keyboardView.setWordEntryCallback(new RotaryKeyboardView.WordEntryCallback() {
             @Override
             public void onWordEntered(String word) {
+                textView.setTextColor(Color.BLACK);
                 textView.setText(word);
+            }
+
+            @Override
+            public void onPartialWord(String partialWord) {
+                textView.setTextColor(Color.GRAY);
+                textView.setText(partialWord);
             }
         });
     }
