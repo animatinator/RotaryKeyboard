@@ -15,6 +15,7 @@ public class RotaryKeyboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_rotary_keyboard);
         final TextView textView = findViewById(R.id.enteredText);
         RotaryKeyboardView keyboardView = findViewById(R.id.keyboard);
+        keyboardView.setLetters(new String[] {"c", "a", "u", "s", "e", "d"});
         keyboardView.setWordEntryCallback(new RotaryKeyboardView.WordEntryCallback() {
             @Override
             public void onWordEntered(String word) {
